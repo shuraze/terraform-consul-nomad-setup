@@ -1,19 +1,13 @@
 # Copyright (c) HashiCorp, Inc.
 # SPDX-License-Identifier: MPL-2.0
 
+locals {
+  aud = join(", ", var.audiences)
+}
+
 output "auth_method_id" {
   description = "The ID of the auth method created for Nomad workloads."
   value       = consul_acl_auth_method.nomad.id
-}
-
-output "tasks_acl_role_ids" {
-  description = "A list of IDs of the ACL roles created for Nomad tasks."
-  value       = [for k, v in consul_acl_role.tasks : v.id]
-}
-
-output "tasks_acl_policy_ids" {
-  description = "A list of IDs of the ACL policies applied to each ACL role."
-  value       = local.tasks_policy_ids
 }
 
 output "nomad_client_config" {
@@ -65,12 +59,12 @@ consul {
   # key_file  = "/etc/ssl/consul.key"
 
   service_identity {
-    aud = ["${var.audience}"]
+    aud = [${local.aud}]
     ttl = "1h"
   }
 
   task_identity {
-    aud = ["${var.audience}"]
+    aud = [${local.aud}]
     ttl = "1h"
   }
 }
