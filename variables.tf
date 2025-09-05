@@ -25,26 +25,34 @@ variable "auth_method_namespace_rules" {
   default = []
 }
 
-variable "tasks_default_policy_name" {
-  description = "The name of the default Consul ACL policy created for Nomad tasks when `tasks_policy_ids` is not defined."
-  type        = string
-  default     = "nomad-tasks"
-}
-
-variable "tasks_policy_ids" {
-  description = "A list of ACL policy IDs to apply to tokens generated for Nomad tasks."
-  type        = list(string)
-  default     = []
-}
-
-variable "audience" {
+variable "audiences" {
   description = "The `aud` value set on Nomad workload identities for Consul. Must match the used in the Nomad, such as the agent configuration for `consul.task_identity.aud` and `consul.service_identity.aud` and the job values for `service.identity.aud` and `task.identity.aud`."
-  type        = string
-  default     = "consul.io"
+  type        = list(string)
+  default     = ["consul.io"]
 }
 
 variable "nomad_namespaces" {
   description = "A list of Nomad namespaces where jobs that need access to Consul are deployed. A Consul ACL role is created for each namespace."
   type        = list(string)
   default     = ["default"]
+}
+variable "binding_rules" {
+  type = map(object({
+    description = string
+    bind_type = string
+    bind_name = string
+    selector  = string
+  }))
+  default = {}
+}
+
+
+variable "policies" {
+  type = map(string)
+  default = {}
+}
+
+variable "role_policies" {
+  type = map(list(string))
+  default = {}
 }
